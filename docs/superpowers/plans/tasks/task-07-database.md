@@ -5,7 +5,7 @@
 **Требования к исполнителю:** [AGENT.md](AGENT.md) — прочитать перед началом
 **Спека:** [../../../spec.md](../../../spec.md)
 
-> **Блокировка.** Требуется `DATABASE_URL` от владельца продукта (проект в Neon) и значение `INVITE_CODE`.
+> **Доступы получены.** `.env.local` заполнен: база Neon (`us-east-1`, PostgreSQL 18.6), `AUTH_SECRET` сгенерирован, `INVITE_CODE` задан.
 
 ---
 
@@ -25,7 +25,10 @@
 
 - [ ] **Step 1: Запросить подключение к базе**
 
-Перед выполнением задачи владелец продукта должен предоставить `DATABASE_URL` из панели Neon (регион `eu-central-1`). Записать его в `.env.local`.
+Владелец продукта предоставляет из панели Neon две строки подключения, обе записываются в `.env.local`:
+
+- `DATABASE_URL` — через pooler, используется приложением
+- `DATABASE_URL_UNPOOLED` — прямое подключение, используется миграциями: drizzle-kit не работает через pgbouncer
 
 Сгенерировать `AUTH_SECRET` и дописать туда же:
 
@@ -39,15 +42,22 @@ node -e "console.log('AUTH_SECRET=' + require('crypto').randomBytes(32).toString
 
 ```typescript
 import type { Config } from 'drizzle-kit'
-import 'dotenv/config'
+import { config } from 'dotenv'
+
+config({ path: '.env.local', quiet: true })
 
 export default {
   schema: './src/server/db/schema.ts',
   out: './drizzle',
   dialect: 'postgresql',
-  dbCredentials: { url: process.env.DATABASE_URL! },
+  dbCredentials: { url: process.env.DATABASE_URL_UNPOOLED ?? process.env.DATABASE_URL! },
 } satisfies Config
 ```
+
+Два отличия от стандартной конфигурации:
+
+- `dotenv` нацелен на `.env.local`: импорт `dotenv/config` читает только `.env`, которого в проекте нет.
+- Используется `DATABASE_URL_UNPOOLED` — прямое подключение. Через pgbouncer миграции не выполняются.
 
 - [ ] **Step 3: Описать схему**
 

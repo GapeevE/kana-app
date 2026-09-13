@@ -26,7 +26,7 @@
 `src/server/repository/progress.ts`:
 
 ```typescript
-import { and, eq, gte, sql } from 'drizzle-orm'
+import { and, eq, gte, inArray, sql } from 'drizzle-orm'
 import { db, cardStates, answers, userProgress } from '@/server/db'
 import { replayAnswers } from '@/core/session'
 import type { SessionAnswer } from '@/core/session'
@@ -65,8 +65,10 @@ export async function loadUserData(userId: string): Promise<UserData> {
     ]),
   )
 
-  const previouslyKnown = new Set(stateRows.map((r) => r.cardId))
-  const newCardsUsedToday = todayRows.filter((r) => !previouslyKnown.has(r.cardId)).length
+  const startedBeforeToday = new Set(
+    stateRows.filter((r) => r.createdAt.toISOString().slice(0, 10) < today()).map((r) => r.cardId),
+  )
+  const newCardsUsedToday = todayRows.filter((r) => !startedBeforeToday.has(r.cardId)).length
 
   return {
     states,
@@ -106,7 +108,7 @@ export async function submitAnswers(userId: string, batch: readonly SessionAnswe
   const history = await db
     .select()
     .from(answers)
-    .where(and(eq(answers.userId, userId), sql`${answers.cardId} = ANY(${touched})`))
+    .where(and(eq(answers.userId, userId), inArray(answers.cardId, touched)))
 
   const asSessionAnswers: SessionAnswer[] = history.map((r) => ({
     cardId: r.cardId,
@@ -215,3 +217,14 @@ Expected: сборка проходит.
 ```
 feat: репозитории прогресса и избранного с серверным пересчётом SM-2
 ```
+
+
+---
+
+## Отклонения от первоначального плана
+
+**`inArray` вместо `sql` с `ANY`.** Конструкция ``sql`${answers.cardId} = ANY(${touched})` `` разворачивает массив в список параметров `($2, $3, $4)`, тогда как оператор `ANY` требует массив. Запрос падал с ошибкой Postgres `42809: op ANY/ALL (array) requires array on right side`. Заменено на штатный `inArray` из Drizzle.
+
+**Подсчёт `newCardsUsedToday` по дате создания состояния.** Исходный вариант считал карточку новой, если её нет в `card_states`. Но запись туда создаётся в том же вызове `submitAnswers`, поэтому к моменту чтения все сегодняшние карточки уже присутствовали и счётчик всегда равнялся нулю. Теперь «старыми» считаются карточки, чьё состояние создано до сегодняшнего дня.
+
+Оба дефекта обнаружены прогоном против настоящей базы и не проявились бы при проверке одной лишь типизации.

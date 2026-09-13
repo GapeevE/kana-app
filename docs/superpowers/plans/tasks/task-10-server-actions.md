@@ -64,8 +64,8 @@ const answerSchema = z.object({
   quality: z.union([z.literal(0), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]),
   mode: z.enum(['input', 'choice']),
   hintUsed: z.boolean(),
-  sessionId: z.string().uuid(),
-  answeredAt: z.string().datetime(),
+  sessionId: z.uuid(),
+  answeredAt: z.iso.datetime(),
 })
 
 const batchSchema = z.array(answerSchema).max(500)
@@ -82,6 +82,8 @@ export async function syncAnswers(batch: unknown): Promise<{ ok: boolean }> {
 ```
 
 Валидация Zod и фильтрация по известным `cardId` — обязательная часть: клиент может прислать что угодно, а SM-2 пересчитывается на основе этих данных.
+
+Синтаксис приведён для Zod 4: `z.uuid()` и `z.iso.datetime()` вместо устаревших `z.string().uuid()` и `z.string().datetime()`.
 
 - [ ] **Step 2: Написать действие избранного**
 

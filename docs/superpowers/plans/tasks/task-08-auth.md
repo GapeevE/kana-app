@@ -10,6 +10,7 @@
 
 **Files:**
 - Create: `src/server/auth/config.ts`
+- Create: `src/server/auth/schemas.ts`
 - Create: `src/server/auth/password.ts`
 - Create: `src/server/auth/actions.ts`
 - Create: `src/server/auth/index.ts`
@@ -44,7 +45,7 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 
 - [ ] **Step 2: Описать схемы валидации**
 
-Добавить в начало `src/server/auth/actions.ts`:
+Схемы выносятся в отдельный файл `src/server/auth/schemas.ts`, а не в `actions.ts`: модуль с директивой `'use server'` может экспортировать только асинхронные функции, а `loginSchema` нужна ещё и в конфигурации Auth.js.
 
 ```typescript
 import { z } from 'zod'
@@ -62,6 +63,8 @@ export const registerSchema = loginSchema.extend({
 
 Поле `acknowledged` — подтверждение того, что пользователь понимает невозможность восстановления пароля (спека, п. 2.2). Значение `true` обязательно, иначе регистрация отклоняется.
 
+Синтаксис приведён для Zod 4, установленного в проекте.
+
 - [ ] **Step 3: Реализовать регистрацию**
 
 Дописать в `src/server/auth/actions.ts`:
@@ -72,6 +75,7 @@ export const registerSchema = loginSchema.extend({
 import { eq } from 'drizzle-orm'
 import { db, users, userProgress } from '@/server/db'
 import { hashPassword } from './password'
+import { registerSchema } from './schemas'
 
 export async function registerUser(input: unknown): Promise<{ ok: true } | { ok: false; error: string }> {
   const parsed = registerSchema.safeParse(input)
@@ -105,7 +109,7 @@ import Credentials from 'next-auth/providers/credentials'
 import { eq } from 'drizzle-orm'
 import { db, users } from '@/server/db'
 import { verifyPassword } from './password'
-import { loginSchema } from './actions'
+import { loginSchema } from './schemas'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: 'jwt', maxAge: 30 * 24 * 60 * 60 },
@@ -159,7 +163,8 @@ export const { GET, POST } = handlers
 import { auth } from './config'
 
 export { handlers, auth, signIn, signOut } from './config'
-export { registerUser, loginSchema, registerSchema } from './actions'
+export { registerUser } from './actions'
+export { loginSchema, registerSchema } from './schemas'
 
 export async function requireUserId(): Promise<string> {
   const session = await auth()

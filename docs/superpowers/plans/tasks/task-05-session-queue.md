@@ -19,7 +19,7 @@
 - Produces:
   - `interface SessionCard { cardId: string; state: CardState | null }`
   - `interface BuildQueueInput { states: ReadonlyMap<string, CardState>; answeredCorrectly: ReadonlySet<string>; today: string; newCardsLimit: number; newCardsUsedToday: number }`
-  - `function buildQueue(input: BuildQueueInput): SessionCard[]`
+  - `function buildQueue(input: BuildQueueInput): SessionCard[]` — добирает новые карточки через границы групп, считая группу пройденной по мере наполнения очереди
   - `function nextCard(queue: readonly SessionCard[], answeredInSession: ReadonlyMap<string, Quality>): SessionCard | null`
   - `function requeueOnFailure(queue: readonly SessionCard[], cardId: string): SessionCard[]`
   - `const DEFAULT_NEW_CARDS_PER_DAY = 10`
@@ -246,3 +246,14 @@ export type { SessionCard, SessionAnswer, AnswerMode, BuildQueueInput } from './
 ```
 feat: сборка очереди сессии с повторениями и лимитом новых карточек
 ```
+
+
+---
+
+## Отклонение от первоначального плана
+
+Исходная реализация ограничивала новые карточки одной открытой группой. Симуляция показала, что при этом дневной лимит недостижим: группы состоят из 3–5 знаков, следующая открывалась только в следующую сессию, и темп жёстко упирался в 5 знаков в день независимо от настройки — вся кана заняла бы 54 дня, а значения лимита 5, 10 и 20 давали одинаковый результат.
+
+По решению владельца продукта очередь добирает знаки из следующих групп внутри одной сессии, как только критерий открытия выполняется по уже набранным карточкам. Линейность и критерий сохранены полностью; устранена только искусственная задержка на сутки.
+
+Результат: при лимите 10 вся кана вводится в оборот за 21 день, пиковая дневная очередь — 32 карточки.

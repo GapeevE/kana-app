@@ -138,7 +138,7 @@ import { requireUserId } from '@/server/auth'
 import { loadUserData } from '@/server/repository'
 import { buildQueue } from '@/core/session'
 import { KANA_CARDS } from '@/data/kana'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 
 export default async function TodayPage() {
   const userId = await requireUserId()
@@ -183,9 +183,9 @@ export default async function TodayPage() {
               <p className="text-sm text-muted-foreground">новых</p>
             </div>
           </div>
-          <Button asChild className="w-full" size="lg">
-            <Link href="/training">Начать тренировку</Link>
-          </Button>
+          <Link href="/training" className={buttonVariants({ size: 'lg', className: 'w-full' })}>
+            Начать тренировку
+          </Link>
         </section>
       ) : (
         <section className="rounded-lg border p-6 text-center space-y-2">
@@ -218,3 +218,12 @@ Expected: сборка проходит.
 ```
 feat: главный экран с очередью на сегодня, навигация и заглушки разделов
 ```
+
+
+---
+
+## Отклонение от первоначального плана
+
+**Ссылки-кнопки оформляются через `buttonVariants`, а не через `<Button asChild>`.** Текущий shadcn/ui построен на Base UI (не на Radix), где свойства `asChild` нет — вместо него применяется `render`. Использование `buttonVariants` даёт тот же вид, не зависит от различий в API примитивов и не заворачивает ссылку в лишний компонент.
+
+Это правило распространяется на все последующие задачи интерфейса.

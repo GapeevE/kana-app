@@ -31,8 +31,10 @@ pnpm dlx shadcn@latest init -d
 - [ ] **Step 2: Добавить нужные компоненты**
 
 ```bash
-pnpm dlx shadcn@latest add button input label card checkbox progress tabs badge dialog sonner
+pnpm dlx shadcn@latest add input label card checkbox progress badge sonner
 ```
+
+Компонент `button` создаётся при инициализации, отдельно добавлять не требуется. `tabs` и `dialog` в текущих экранах не используются — добавятся, если понадобятся.
 
 - [ ] **Step 3: Написать форму входа**
 
@@ -108,7 +110,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
-import { registerUser } from '@/server/auth'
+import { registerUser } from '@/server/auth/actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -248,3 +250,10 @@ Expected: сборка проходит.
 ```
 feat: экраны входа и регистрации с предупреждением о невосстановимости пароля
 ```
+
+
+---
+
+## Отклонение от первоначального плана
+
+**Импорт `registerUser` из `@/server/auth/actions`, а не из `@/server/auth`.** Индексный файл реэкспортирует `auth` и конфигурацию Auth.js; импорт из него в клиентский компонент затянул бы серверный код в браузерный бандл. Клиентские компоненты обращаются напрямую к модулю с серверными действиями.

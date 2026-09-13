@@ -62,13 +62,13 @@ export function RegisterForm() {
 
       <div className="rounded-md border border-destructive/40 bg-destructive/5 p-3 space-y-3">
         <p className="text-sm">
-          Приложение не хранит почту и телефон, поэтому <strong>восстановить пароль будет невозможно</strong>. Если вы
-          его забудете, доступ к аккаунту и всему прогрессу будет потерян навсегда.
+          Мы не храним ни почту, ни телефон, поэтому <strong>восстановить пароль будет невозможно</strong>. Забудешь —
+          потеряешь аккаунт и весь прогресс, насовсем.
         </p>
         <div className="flex items-start gap-2">
           <Checkbox id="ack" checked={acknowledged} onCheckedChange={(v) => setAcknowledged(v === true)} />
           <Label htmlFor="ack" className="text-sm font-normal leading-snug">
-            Я понимаю, что восстановить пароль будет невозможно
+            Понимаю: забуду пароль — потеряю всё
           </Label>
         </div>
       </div>

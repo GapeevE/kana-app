@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Flame, RotateCcw, Sparkles } from 'lucide-react'
 import { requireUserId } from '@/server/auth'
 import { loadUserData } from '@/server/repository'
 import { buildQueue } from '@/core/session'
@@ -30,37 +31,48 @@ export default async function TodayPage() {
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 p-6">
       <header className="space-y-1">
-        <h1 className="text-2xl font-semibold">Сегодня</h1>
-        {data.streakDays > 0 && <p className="text-sm text-muted-foreground">Серия: {data.streakDays} дн.</p>}
+        <h1 className="text-3xl font-semibold">Сегодня</h1>
+        {data.streakDays > 0 && (
+          <p className="flex items-center gap-1.5 text-sm text-primary">
+            <Flame className="size-4" />
+            Серия: {data.streakDays} дн.
+          </p>
+        )}
       </header>
 
       {queue.length > 0 ? (
-        <section className="space-y-4 rounded-lg border p-6">
+        <section className="animate-in fade-in space-y-5 rounded-xl border border-border bg-card p-6">
           <div className="flex gap-6">
             <div>
-              <p className="text-3xl font-semibold">{dueCount}</p>
-              <p className="text-sm text-muted-foreground">к повторению</p>
+              <p className="text-4xl font-semibold">{dueCount}</p>
+              <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <RotateCcw className="size-3.5" />
+                повторить
+              </p>
             </div>
             <div>
-              <p className="text-3xl font-semibold">{newCount}</p>
-              <p className="text-sm text-muted-foreground">новых</p>
+              <p className="text-4xl font-semibold">{newCount}</p>
+              <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <Sparkles className="size-3.5" />
+                новых
+              </p>
             </div>
           </div>
           <Link href="/training" className={buttonVariants({ size: 'lg', className: 'w-full' })}>
-            Начать тренировку
+            Погнали
           </Link>
         </section>
       ) : (
-        <section className="space-y-2 rounded-lg border p-6 text-center">
-          <p className="font-medium">На сегодня всё</p>
+        <section className="animate-in fade-in space-y-2 rounded-xl border border-border bg-card p-6 text-center">
+          <p className="text-lg font-medium">На сегодня всё — можно выдохнуть</p>
           <p className="text-sm text-muted-foreground">
-            {nextDue ? `Ближайшее повторение: ${nextDue}` : 'Возвращайтесь завтра'}
+            {nextDue ? `Ближайшее повторение: ${nextDue}` : 'Заглядывай завтра'}
           </p>
         </section>
       )}
 
       <p className="text-sm text-muted-foreground">
-        Освоено {learned} из {KANA_CARDS.length}
+        Ты освоил {learned} из {KANA_CARDS.length}
       </p>
     </main>
   )

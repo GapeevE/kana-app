@@ -10,10 +10,10 @@ export default async function SettingsPage() {
 
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 space-y-6 p-6">
-      <h1 className="text-2xl font-semibold">Ещё</h1>
+      <h1 className="text-3xl font-semibold">Ещё</h1>
 
       <section className="space-y-1 rounded-lg border p-4">
-        <p className="text-sm text-muted-foreground">Вы вошли как</p>
+        <p className="text-sm text-muted-foreground">Ты вошёл как</p>
         <p className="font-medium">{session?.user?.name}</p>
       </section>
 

@@ -27,7 +27,7 @@ export function LoginForm() {
 
     setPending(false)
     if (result?.error) {
-      setError('Неверный логин или пароль')
+      setError('Логин или пароль не подходят')
       return
     }
     router.push('/')
@@ -49,7 +49,7 @@ export function LoginForm() {
         {pending ? 'Вход…' : 'Войти'}
       </Button>
       <p className="text-sm text-muted-foreground text-center">
-        Нет аккаунта?{' '}
+        Ещё нет аккаунта?{' '}
         <Link href="/register" className="underline">
           Зарегистрироваться
         </Link>

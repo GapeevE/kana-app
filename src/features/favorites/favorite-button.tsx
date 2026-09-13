@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { toggleFavoriteAction } from '@/server/actions/favorites'
+import { Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export function FavoriteButton({ cardId, initial }: { cardId: string; initial: boolean }) {
@@ -18,7 +19,8 @@ export function FavoriteButton({ cardId, initial }: { cardId: string; initial: b
         })
       }
     >
-      {active ? '★ В избранном' : '☆ В избранное'}
+      <Star className={active ? 'size-4 fill-current' : 'size-4'} />
+      {active ? 'В избранном' : 'В избранное'}
     </Button>
   )
 }

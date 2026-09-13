@@ -9,6 +9,7 @@ export interface KanaCard {
   type: KanaType
   group: string
   row: string
+  hint?: string
   facts?: string[]
   examples?: string[]
 }

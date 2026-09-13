@@ -18,9 +18,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang="ru" className={`${inter.variable} ${notoJP.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col">
-        <div className="flex flex-1 flex-col">{children}</div>
+      <body className="flex min-h-full flex-col bg-background text-foreground">
         {session?.user && <AppNav />}
+        <div className="flex flex-1 flex-col">{children}</div>
       </body>
     </html>
   )

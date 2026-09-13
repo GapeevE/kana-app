@@ -1,3 +1,4 @@
+import { Flame, Sparkles, Trophy } from 'lucide-react'
 import { requireUserId } from '@/server/auth'
 import { loadUserData } from '@/server/repository'
 import { KANA_CARDS } from '@/data/kana'
@@ -12,23 +13,32 @@ export default async function ProgressPage() {
 
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 space-y-6 p-6">
-      <h1 className="text-2xl font-semibold">Прогресс</h1>
+      <h1 className="text-3xl font-semibold">Прогресс</h1>
 
       <div className="flex gap-6">
         <div>
-          <p className="text-3xl font-semibold">
+          <p className="text-4xl font-semibold">
             {learned}
             <span className="text-base text-muted-foreground"> / {KANA_CARDS.length}</span>
           </p>
-          <p className="text-sm text-muted-foreground">освоено</p>
+          <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <Trophy className="size-3.5" />
+            освоено
+          </p>
         </div>
         <div>
-          <p className="text-3xl font-semibold">{started}</p>
-          <p className="text-sm text-muted-foreground">начато</p>
+          <p className="text-4xl font-semibold">{started}</p>
+          <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <Sparkles className="size-3.5" />
+            в работе
+          </p>
         </div>
         <div>
-          <p className="text-3xl font-semibold">{data.streakDays}</p>
-          <p className="text-sm text-muted-foreground">дней подряд</p>
+          <p className="text-4xl font-semibold text-primary">{data.streakDays}</p>
+          <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <Flame className="size-3.5" />
+            дней подряд
+          </p>
         </div>
       </div>
 

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
+import { Check, Lightbulb, List, X } from 'lucide-react'
 import { useTraining } from './store'
 import { useSync, flush } from './use-sync'
 import { KanaKeyboard } from './kana-keyboard'
@@ -33,7 +34,8 @@ function pickDistractors(card: KanaCard): string[] {
 }
 
 function hintFor(card: KanaCard): string {
-  return `Ряд «${card.row}», чтение начинается на «${card.romaji[0]}»`
+  if (card.hint) return card.hint
+  return `Ряд «${card.row}», гласная «${card.romaji.at(-1)}»`
 }
 
 export function TrainingScreen({ sessionId, items, drillOnly = false }: Props) {
@@ -54,6 +56,11 @@ export function TrainingScreen({ sessionId, items, drillOnly = false }: Props) {
 
   const [value, setValue] = useState('')
   const [feedback, setFeedback] = useState<{ quality: number; romaji: string } | null>(null)
+  const [coarsePointer, setCoarsePointer] = useState(false)
+
+  useEffect(() => {
+    setCoarsePointer(window.matchMedia('(pointer: coarse)').matches)
+  }, [])
 
   const itemsRef = useRef(items)
   itemsRef.current = items
@@ -108,8 +115,8 @@ export function TrainingScreen({ sessionId, items, drillOnly = false }: Props) {
   if (started && finished) {
     return (
       <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-4 p-6 text-center">
-        <h1 className="text-2xl font-semibold">Сессия завершена</h1>
-        <p className="text-muted-foreground">Отвечено карточек: {answeredCount}</p>
+        <h1 className="text-3xl font-semibold">Готово!</h1>
+        <p className="text-muted-foreground">Ты ответил на {answeredCount} карточек</p>
         <Link
           href={drillOnly ? '/favorites' : '/'}
           className={buttonVariants()}
@@ -130,14 +137,25 @@ export function TrainingScreen({ sessionId, items, drillOnly = false }: Props) {
       <p className="text-sm text-muted-foreground">Осталось: {queue.length}</p>
 
       <div className="flex flex-1 flex-col items-center justify-center gap-6">
-        <span className="kana-glyph text-8xl">{card.char}</span>
+        <div className="flex h-6 items-center justify-center">
+          {hintUsed && !feedback && (
+            <p className="animate-in fade-in slide-in-from-top-1 text-sm text-muted-foreground">{hintFor(card)}</p>
+          )}
+        </div>
 
-        {hintUsed && !feedback && <p className="text-sm text-muted-foreground">{hintFor(card)}</p>}
+        <span key={card.id} className="kana-glyph animate-in fade-in zoom-in-95 text-8xl duration-300">
+          {card.char}
+        </span>
 
         {feedback ? (
-          <div className="space-y-3 text-center">
-            <p className={feedback.quality === 0 ? 'font-medium text-destructive' : 'font-medium text-primary'}>
-              {feedback.quality === 0 ? 'Неверно' : 'Верно'} — {feedback.romaji}
+          <div className="animate-in fade-in space-y-3 text-center">
+            <p
+              className={`flex items-center justify-center gap-2 text-lg font-medium ${
+                feedback.quality === 0 ? 'text-destructive' : 'text-primary'
+              }`}
+            >
+              {feedback.quality === 0 ? <X className="size-5" /> : <Check className="size-5" />}
+              {feedback.quality === 0 ? 'Мимо' : 'Точно!'} — {feedback.romaji}
             </p>
             <p className="text-sm text-muted-foreground">Оценка: {feedback.quality}</p>
             <Button onClick={() => setFeedback(null)}>Дальше</Button>
@@ -148,23 +166,29 @@ export function TrainingScreen({ sessionId, items, drillOnly = false }: Props) {
               value={value}
               onChange={(e) => setValue(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && submit(value)}
-              placeholder="Введите чтение"
-              autoFocus
+              placeholder="Как читается?"
+              inputMode={coarsePointer ? 'none' : 'text'}
+              autoFocus={!coarsePointer}
               autoCapitalize="none"
               autoCorrect="off"
               autoComplete="off"
               spellCheck={false}
+              className="text-center text-lg"
             />
-            <KanaKeyboard
-              onLetter={(l) => setValue((v) => v + l)}
-              onBackspace={() => setValue((v) => v.slice(0, -1))}
-              onSubmit={() => submit(value)}
-            />
+            {coarsePointer && (
+              <KanaKeyboard
+                onLetter={(l) => setValue((v) => v + l)}
+                onBackspace={() => setValue((v) => v.slice(0, -1))}
+                onSubmit={() => submit(value)}
+              />
+            )}
             <div className="flex gap-2">
               <Button variant="outline" className="flex-1" onClick={useHint} disabled={hintUsed}>
+                <Lightbulb className="size-4" />
                 Подсказка
               </Button>
               <Button variant="outline" className="flex-1" onClick={() => setMode('choice')}>
+                <List className="size-4" />
                 Варианты
               </Button>
             </div>
@@ -180,6 +204,7 @@ export function TrainingScreen({ sessionId, items, drillOnly = false }: Props) {
               ))}
             </div>
             <Button variant="outline" className="w-full" onClick={useHint} disabled={hintUsed}>
+              <Lightbulb className="size-4" />
               Подсказка
             </Button>
           </div>

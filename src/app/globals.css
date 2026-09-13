@@ -58,72 +58,38 @@ body {
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: oklch(0.17 0.012 285);
+  --foreground: oklch(0.96 0.004 285);
+  --card: oklch(0.21 0.014 285);
+  --card-foreground: oklch(0.96 0.004 285);
+  --popover: oklch(0.21 0.014 285);
+  --popover-foreground: oklch(0.96 0.004 285);
+  --primary: oklch(0.58 0.2 13);
+  --primary-foreground: oklch(0.99 0.01 13);
+  --secondary: oklch(0.27 0.015 285);
+  --secondary-foreground: oklch(0.96 0.004 285);
+  --muted: oklch(0.25 0.014 285);
+  --muted-foreground: oklch(0.71 0.015 285);
+  --accent: oklch(0.32 0.055 13);
+  --accent-foreground: oklch(0.96 0.01 13);
+  --destructive: oklch(0.68 0.19 25);
+  --border: oklch(0.32 0.016 285);
+  --input: oklch(0.29 0.016 285);
+  --ring: oklch(0.66 0.19 13);
+  --chart-1: oklch(0.7 0.19 13);
+  --chart-2: oklch(0.58 0.15 13);
+  --chart-3: oklch(0.48 0.11 13);
+  --chart-4: oklch(0.38 0.07 13);
+  --chart-5: oklch(0.28 0.04 13);
+  --radius: 0.75rem;
+  --sidebar: oklch(0.21 0.014 285);
+  --sidebar-foreground: oklch(0.96 0.004 285);
+  --sidebar-primary: oklch(0.58 0.2 13);
+  --sidebar-primary-foreground: oklch(0.99 0.01 13);
+  --sidebar-accent: oklch(0.32 0.055 13);
+  --sidebar-accent-foreground: oklch(0.96 0.01 13);
+  --sidebar-border: oklch(0.32 0.016 285);
+  --sidebar-ring: oklch(0.66 0.19 13);
 }
 
 @layer base {
@@ -148,17 +114,11 @@ body {
 
 @media (prefers-reduced-motion: no-preference) {
   .stroke-order path {
-    stroke-dasharray: 120;
-    stroke-dashoffset: 120;
-    animation: stroke-draw 0.5s ease forwards;
+    stroke-dasharray: var(--len);
+    stroke-dashoffset: var(--len);
+    animation: stroke-draw 0.45s linear forwards;
+    animation-delay: var(--delay);
   }
-
-  .stroke-order path:nth-child(1) { animation-delay: 0s; }
-  .stroke-order path:nth-child(2) { animation-delay: 0.45s; }
-  .stroke-order path:nth-child(3) { animation-delay: 0.9s; }
-  .stroke-order path:nth-child(4) { animation-delay: 1.35s; }
-  .stroke-order path:nth-child(5) { animation-delay: 1.8s; }
-  .stroke-order path:nth-child(6) { animation-delay: 2.25s; }
 }
 
 @keyframes stroke-draw {

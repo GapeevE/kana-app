@@ -1,5 +1,6 @@
 'use client'
 
+import { Delete } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 const LETTERS = [
@@ -20,7 +21,7 @@ export function KanaKeyboard({
   onSubmit: () => void
 }) {
   return (
-    <div className="space-y-2 md:hidden">
+    <div className="space-y-2">
       <div className="grid grid-cols-6 gap-1">
         {LETTERS.map((letter) => (
           <Button key={letter} type="button" variant="outline" size="sm" onClick={() => onLetter(letter)}>
@@ -30,7 +31,7 @@ export function KanaKeyboard({
       </div>
       <div className="flex gap-2">
         <Button type="button" variant="outline" className="flex-1" onClick={onBackspace} aria-label="Стереть">
-          ←
+          <Delete className="size-4" />
         </Button>
         <Button type="button" className="flex-[2]" onClick={onSubmit}>
           Ответить
